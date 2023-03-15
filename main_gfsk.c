@@ -211,7 +211,7 @@ int main(void)
   fsm.rxTimeout = 3000; // 3000 ms
   fsm.rxMargin = 200;   // 200 ms
   fsm.randomDelay = rnd >> 22; // [0, 1023] ms
-  sprintf(uartBuff, "rand=%u\r\n", fsm.randomDelay);
+  sprintf(uartBuff, "rand=%lu\r\n", fsm.randomDelay);
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
 
   HAL_Delay(fsm.randomDelay);
@@ -588,7 +588,7 @@ void eventRxError(pingPongFSM_t *const fsm)
   */
 void enterMasterRx(pingPongFSM_t *const fsm)
 {
-  HAL_UART_Transmit(&huart2, "Master Rx start\r\n", 17, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Master Rx start\r\n", 17, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR,
                           IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR,
                           IRQ_RADIO_NONE,
@@ -607,7 +607,7 @@ void enterMasterRx(pingPongFSM_t *const fsm)
   */
 void enterSlaveRx(pingPongFSM_t *const fsm)
 {
-  HAL_UART_Transmit(&huart2, "Slave Rx start\r\n", 16, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Slave Rx start\r\n", 16, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR,
                           IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR,
                           IRQ_RADIO_NONE,
@@ -628,8 +628,8 @@ void enterMasterTx(pingPongFSM_t *const fsm)
 {
   HAL_Delay(fsm->rxMargin);
 
-  HAL_UART_Transmit(&huart2, "...PING\r\n", 9, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart2, "Master Tx start\r\n", 17, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"...PING\r\n", 9, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Master Tx start\r\n", 17, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_RADIO_NONE,
@@ -652,8 +652,8 @@ void enterSlaveTx(pingPongFSM_t *const fsm)
 {
   HAL_Delay(fsm->rxMargin);
 
-  HAL_UART_Transmit(&huart2, "...PONG\r\n", 9, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart2, "Slave Tx start\r\n", 16, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"...PONG\r\n", 9, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Slave Tx start\r\n", 16, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_RADIO_NONE,
@@ -686,8 +686,8 @@ void transitionRxDone(pingPongFSM_t *const fsm)
   SUBGRF_GetPacketStatus(&packetStatus);
   SUBGRF_GetCFO(FSK_DATARATE, &cfo);
 
-  sprintf(uartBuff, "RssiValue=%d dBm, Cfo=%d Hz\r\n", packetStatus.Params.Gfsk.RssiAvg, cfo);
-  HAL_UART_Transmit(&huart2, uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
+  sprintf(uartBuff, "RssiValue=%d dBm, Cfo=%ld Hz\r\n", packetStatus.Params.Gfsk.RssiAvg, cfo);
+  HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
 }
 
 /* USER CODE END 4 */

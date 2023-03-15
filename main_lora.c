@@ -212,7 +212,7 @@ int main(void)
   fsm.rxTimeout = 3000; // 3000 ms
   fsm.rxMargin = 200;   // 200 ms
   fsm.randomDelay = rnd >> 22; // [0, 1023] ms
-  sprintf(uartBuff, "rand=%u\r\n", fsm.randomDelay);
+  sprintf(uartBuff, "rand=%lu\r\n", fsm.randomDelay);
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
 
   HAL_Delay(fsm.randomDelay);
@@ -592,7 +592,7 @@ void eventRxError(pingPongFSM_t *const fsm)
   */
 void enterMasterRx(pingPongFSM_t *const fsm)
 {
-  HAL_UART_Transmit(&huart2, "Master Rx start\r\n", 17, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Master Rx start\r\n", 17, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR | IRQ_HEADER_ERROR,
                           IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR | IRQ_HEADER_ERROR,
                           IRQ_RADIO_NONE,
@@ -611,7 +611,7 @@ void enterMasterRx(pingPongFSM_t *const fsm)
   */
 void enterSlaveRx(pingPongFSM_t *const fsm)
 {
-  HAL_UART_Transmit(&huart2, "Slave Rx start\r\n", 16, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Slave Rx start\r\n", 16, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR | IRQ_HEADER_ERROR,
                           IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR | IRQ_HEADER_ERROR,
                           IRQ_RADIO_NONE,
@@ -632,8 +632,8 @@ void enterMasterTx(pingPongFSM_t *const fsm)
 {
   HAL_Delay(fsm->rxMargin);
 
-  HAL_UART_Transmit(&huart2, "...PING\r\n", 9, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart2, "Master Tx start\r\n", 17, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"...PING\r\n", 9, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Master Tx start\r\n", 17, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_RADIO_NONE,
@@ -656,8 +656,8 @@ void enterSlaveTx(pingPongFSM_t *const fsm)
 {
   HAL_Delay(fsm->rxMargin);
 
-  HAL_UART_Transmit(&huart2, "...PONG\r\n", 9, HAL_MAX_DELAY);
-  HAL_UART_Transmit(&huart2, "Slave Tx start\r\n", 16, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"...PONG\r\n", 9, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)"Slave Tx start\r\n", 16, HAL_MAX_DELAY);
   SUBGRF_SetDioIrqParams( IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
                           IRQ_RADIO_NONE,
@@ -679,7 +679,6 @@ void enterSlaveTx(pingPongFSM_t *const fsm)
 void transitionRxDone(pingPongFSM_t *const fsm)
 {
   PacketStatus_t packetStatus;
-  int32_t cfo;
   char uartBuff[50];
 
   // Workaround 15.3 in DS.SX1261-2.W.APP (because following RX w/ timeout sequence)
@@ -690,7 +689,7 @@ void transitionRxDone(pingPongFSM_t *const fsm)
   SUBGRF_GetPacketStatus(&packetStatus);
 
   sprintf(uartBuff, "RssiValue=%d dBm, SnrValue=%d Hz\r\n", packetStatus.Params.LoRa.RssiPkt, packetStatus.Params.LoRa.SnrPkt);
-  HAL_UART_Transmit(&huart2, uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
 }
 
 /* USER CODE END 4 */
