@@ -25,10 +25,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 #include <string.h>
 #include <stdio.h>
 #include "radio_driver.h"
 #include "stm32wlxx_nucleo.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,6 +69,7 @@ typedef struct
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+
 #define RF_FREQUENCY                                868000000 /* Hz */
 #define TX_OUTPUT_POWER                             14        /* dBm */
 #define LORA_BANDWIDTH                              0         /* Hz */
@@ -80,15 +83,18 @@ typedef struct
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 void (*volatile eventReceptor)(pingPongFSM_t *const fsm);
-PacketParams_t packetParams;  // TODO: this is lazy
+PacketParams_t packetParams;  // TODO: this is lazy...
 
 const RadioLoRaBandwidths_t Bandwidths[] = { LORA_BW_125, LORA_BW_250, LORA_BW_500 };
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
 void radioInit(void);
 void RadioOnDioIrq(RadioIrqMasks_t radioIrq);
 void eventTxDone(pingPongFSM_t *const fsm);
@@ -101,6 +107,7 @@ void enterSlaveRx(pingPongFSM_t *const fsm);
 void enterMasterTx(pingPongFSM_t *const fsm);
 void enterSlaveTx(pingPongFSM_t *const fsm);
 void transitionRxDone(pingPongFSM_t *const fsm);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -191,7 +198,10 @@ int main(void)
   MX_SUBGHZ_Init();
   /* USER CODE BEGIN 2 */
 
-  strcpy(uartBuff, "\n\rPING PONG\r\nAPP_VERSION=0.0.1\r\n---------------\r\n");
+  BSP_LED_Init(LED_GREEN);
+  BSP_LED_Init(LED_RED);
+
+  strcpy(uartBuff, "\n\rPING PONG\r\nAPP_VERSION=0.0.2\r\n---------------\r\n");
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
   sprintf(uartBuff, "LORA_MODULATION\r\nLORA_BW=%d Hz\r\nLORA_SF=%d\r\n", (1 << LORA_BANDWIDTH) * 125, LORA_SPREADING_FACTOR);
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);

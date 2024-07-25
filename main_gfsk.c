@@ -25,10 +25,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 #include <string.h>
 #include <stdio.h>
 #include "radio_driver.h"
 #include "stm32wlxx_nucleo.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,6 +69,7 @@ typedef struct
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+
 #define RF_FREQUENCY                                915000000 /* Hz */
 #define TX_OUTPUT_POWER                             14        /* dBm */
 #define FSK_FDEV                                    25000     /* Hz */
@@ -76,18 +79,22 @@ typedef struct
 #define FSK_SYNCWORD_LENGTH                         3
 //#define FSK_FIX_LENGTH_PAYLOAD_ON                   false
 //#define PAYLOAD_LEN                                 64
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 void (*volatile eventReceptor)(pingPongFSM_t *const fsm);
-PacketParams_t packetParams;  // TODO: this is lazy
+PacketParams_t packetParams;  // TODO: this is lazy...
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
 void radioInit(void);
 void RadioOnDioIrq(RadioIrqMasks_t radioIrq);
 void eventTxDone(pingPongFSM_t *const fsm);
@@ -100,6 +107,7 @@ void enterSlaveRx(pingPongFSM_t *const fsm);
 void enterMasterTx(pingPongFSM_t *const fsm);
 void enterSlaveTx(pingPongFSM_t *const fsm);
 void transitionRxDone(pingPongFSM_t *const fsm);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -190,7 +198,10 @@ int main(void)
   MX_SUBGHZ_Init();
   /* USER CODE BEGIN 2 */
 
-  strcpy(uartBuff, "\n\rPING PONG\r\nAPP_VERSION=0.0.1\r\n---------------\r\n");
+  BSP_LED_Init(LED_GREEN);
+  BSP_LED_Init(LED_RED);
+
+  strcpy(uartBuff, "\n\rPING PONG\r\nAPP_VERSION=0.0.2\r\n---------------\r\n");
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
   sprintf(uartBuff, "FSK_MODULATION\r\nFSK_BW=%d Hz\r\nFSK_DR=%d bits/s\r\n", FSK_BANDWIDTH, FSK_DATARATE);
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
